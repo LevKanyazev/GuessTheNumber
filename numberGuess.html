@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Guess the number</h1>
+    <p>Simple javascript game</p>
+    <input id="input" type="text" placeholder="Guess number"/>
+    <input id="submitBtn" type="submit" value="Guess"/>
+    <p id="info" style="color:red;">Game not started yet...</p>
+<script>
+
+//  get the submit button
+let submitBtn = document.getElementById('submitBtn');
+
+//  get the input number element
+let input = document.getElementById('input');
+
+//  get the info paragraph element
+let info = document.getElementById('info')
+
+//  variable to keep count if the game is started
+let isStarted = false;
+
+//  Variable to keep count how many turns left
+let turns = 10;
+
+//  Variable to store the number to guess
+let numberToGuess = 0;
+
+//  Variable to store the number inputted
+let numberInput = 0;
+
+//  Click event to trigger the game
+submitBtn.addEventListener('click', () => {
+    
+    //  if the game haven't started yet, start the game
+    if(!isStarted) {
+
+        info.style.color = 'red';
+        
+        //  no number entered in the input field, return and show message
+        if(!parseInt(input.value)) {
+            info.innerHTML = 'Game not started yet... (Note: please choose a number from 1-100)';
+            return;
+        }
+
+        console.log('Game Started...');
+        numberToGuess = Math.round(Math.random() * 100);
+        turns = 10;
+        isStarted = true;
+        info.innerHTML = '';
+        game();
+    }
+
+    //  The game haven't finished yet, let the user keep guessing untill out of turns
+    else {
+        game();
+    }
+});
+
+//  main function of the game
+let game = () => {
+    switch (isStarted) {
+
+        //  Game has started
+        case true: {
+
+            //  if we have more then 0 turns left, keep the game alive
+            if(turns > 1) {
+                
+                //  get the number input from the element
+                numberInput = input.value;
+                input.value = '';
+                turns -= 1;
+                console.log('Expected Number:   ' + numberToGuess + '\nNumber entered:    ' + numberInput + '\n');
+                
+                //  No number entered by the user while the game is running
+                if(!parseInt(numberInput)) {
+
+                    //  Give the player extra turn
+                    turns += 1;
+                }
+
+
+                //  GAME WON !!
+                if(numberInput == numberToGuess) {
+                    gameWon();
+                    return;
+                }
+                else {
+                    switch (numberInput > numberToGuess) {
+
+                        //  the number entered is more then the corrent guess number
+                        case true:
+                            numberGreater();
+                            break;
+
+                        //  the number entered is less then the corrent guess number
+                        case false:
+                            numberLower();
+                            break;
+                    }
+                }
+            }
+
+            //  Number not guessed in 10 turns, game over.
+            else {
+                gameOver();
+                return;
+            }
+        }
+    }
+}
+
+//  Game won function
+let gameWon = () => {
+    info.style.color = 'lightgreen';
+    info.innerHTML = '<b>Game won! Congrats!!, Click the button to play again!</b>';
+    input.value = '';
+    isStarted = false;
+}
+
+//  Game over function
+let gameOver = () => {
+    info.innerHTML = 'Game over! You ran out of turns.';
+    input.value = '';
+    isStarted = false;
+}
+
+//  Notify number is greater Function
+let numberGreater = () => info.innerHTML = 'Last Guess: <b>' + numberInput + '</b> - is greater.<br/>Turns left: <b>' + turns + '<b/>';
+
+//  Notify number is lower Function
+let numberLower = () => info.innerHTML = 'Last Guess: <b>' + numberInput + '</b> - is lower.<br/>Turns left: <b>' + turns + '<b/>';
+
+</script>
+</body>
+</html>
